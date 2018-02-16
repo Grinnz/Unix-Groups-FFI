@@ -39,6 +39,7 @@ $ffi->attach(setgroups => ['size_t', 'gid_t[]'] => 'int', sub {
 $ffi->attach(initgroups => ['string', 'gid_t'] => 'int', sub {
   my ($xsub, $user, $group) = @_;
   $group = (getpwnam($user))[3] unless defined $group;
+  do { $! = EINVAL; die "$!" } unless defined $group;
   my $rc = $xsub->($user, $group);
   die "$!" if $rc < 0;
   return 0;
@@ -87,6 +88,8 @@ check it after trapping the exception for finer exception handling:
     }
   }
 
+See the documentation for each syscall for details on the possible error codes.
+
 =head1 FUNCTIONS
 
 All functions are exported individually on demand. A function will not be
@@ -97,15 +100,16 @@ syscall.
 
   my @gids = getgroups;
 
-Returns the supplementary group IDs of the current process, as in
-L<getgroups(2)>.
+Returns the supplementary group IDs of the current process via L<getgroups(2)>.
 
 =head2 setgroups
 
   setgroups(@gids);
 
-Sets the supplementary group IDs for the current process, as in
-L<setgroups(2)>.
+Sets the supplementary group IDs for the current process via L<setgroups(2)>.
+Attempting to set more than C<NGROUPS_MAX> groups (32 before Linux 2.6.4 or
+65536 since Linux 2.6.4) will result in an C<EINVAL> error. The C<CAP_SETGID>
+L<capability|capabilities(7)> or equivalent privilege is required.
 
 =head2 initgroups
 
@@ -113,9 +117,13 @@ L<setgroups(2)>.
   initgroups($username);
 
 Initializes the supplementary group access list for the current process to all
-groups of which C<$username> is a member, also including C<$gid>, as in
-L<initgroups(3)>. As a special case, the primary group ID of the given username
-is included if C<$gid> is not defined.
+groups of which C<$username> is a member, also including C<$gid>, via
+L<initgroups(3)>. If C<$username> does not exist on the system, the
+supplementary group access list will be set only to C<$gid>. The C<CAP_SETGID>
+L<capability|capabilities(7)> or equivalent privilege is required.
+
+As a special case, the primary group ID of C<$username> is included if C<$gid>
+is not passed (an C<EINVAL> error will result if the username does not exist).
 
 =head1 BUGS
 
@@ -135,4 +143,4 @@ This is free software, licensed under:
 
 =head1 SEE ALSO
 
-L<POSIX>, L<credentials(7)>
+L<POSIX>, L<credentials(7)>, L<capabilities(7)>

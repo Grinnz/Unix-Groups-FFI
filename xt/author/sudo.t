@@ -34,4 +34,7 @@ ok +(grep { $_ == $gid } getgroups), "Supplementary groups contain $gid";
 ok !eval { setgroups((0)x2**18); 1 }, 'Failed to set 2**18 groups';
 cmp_ok $!, '==', EINVAL, 'right error code';
 
+ok !eval { initgroups('not-a-real-user-hopefully'); 1 }, 'Failed to initialize groups for nonexistant user';
+cmp_ok $!, '==', EINVAL, 'right error code';
+
 done_testing;
