@@ -10,3 +10,10 @@ perl:
   - "5.12"
   - "5.10"
   - "5.8"
+env:
+  - TEST_RUN_SUDO=0
+  - TEST_RUN_SUDO=1
+sudo: required
+script:
+  - perl Makefile.PL && make && make test
+  - prove -lr xt/author/
