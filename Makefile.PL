@@ -21,6 +21,7 @@ my %WriteMakefileArgs = (
   "MIN_PERL_VERSION" => "5.008001",
   "NAME" => "Unix::Groups::FFI",
   "PREREQ_PM" => {
+    "Carp" => 0,
     "Errno" => 0,
     "Exporter" => "5.57",
     "FFI::Platypus" => "0.20"
@@ -37,6 +38,7 @@ my %WriteMakefileArgs = (
 );
 
 my %FallbackPrereqs = (
+  "Carp" => 0,
   "Errno" => 0,
   "Exporter" => "5.57",
   "ExtUtils::MakeMaker" => 0,

@@ -2,6 +2,7 @@ package Unix::Groups::FFI;
 
 use strict;
 use warnings;
+use Carp 'croak';
 use Errno 'EINVAL';
 use Exporter 'import';
 use FFI::Platypus;
@@ -17,7 +18,7 @@ my $ffi = FFI::Platypus->new(lib => [undef], ignore_not_found => 1);
 $ffi->attach(getgroups => ['int', 'gid_t[]'] => 'int', sub {
   my ($xsub) = @_;
   my $count = $xsub->(0, []);
-  die "$!" if $count < 0;
+  croak "$!" if $count < 0;
   return () if $count == 0;
   my @groups = (0)x$count;
   my $rc = $xsub->($count, \@groups);
@@ -25,23 +26,24 @@ $ffi->attach(getgroups => ['int', 'gid_t[]'] => 'int', sub {
     @groups = (0)x(MAX_NGROUPS_MAX);
     $rc = $xsub->(MAX_NGROUPS_MAX, \@groups);
   }
-  die "$!" if $rc < 0;
+  croak "$!" if $rc < 0;
   return @groups[0..$rc-1];
 });
 
 $ffi->attach(setgroups => ['size_t', 'gid_t[]'] => 'int', sub {
   my ($xsub, @groups) = @_;
   my $rc = $xsub->(scalar(@groups), \@groups);
-  die "$!" if $rc < 0;
+  croak "$!" if $rc < 0;
   return 0;
 });
 
 $ffi->attach(initgroups => ['string', 'gid_t'] => 'int', sub {
   my ($xsub, $user, $group) = @_;
+  $user = '' unless defined $user;
   $group = (getpwnam($user))[3] unless defined $group;
-  do { $! = EINVAL; die "$!" } unless defined $group;
+  do { $! = EINVAL; croak "$!" } unless defined $group;
   my $rc = $xsub->($user, $group);
-  die "$!" if $rc < 0;
+  croak "$!" if $rc < 0;
   return 0;
 });
 
