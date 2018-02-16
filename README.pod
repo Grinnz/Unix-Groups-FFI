@@ -14,8 +14,9 @@ Unix::Groups::FFI - Interface to Unix group syscalls
 
 =head1 DESCRIPTION
 
-L<Unix::Groups::FFI> provides a FFI interface to several syscalls related to
-Unix groups. As such it will only work on Unix-like operating systems.
+This module provides a FFI interface to several syscalls related to Unix
+groups, including L<getgroups(2)>, L<setgroups(2)>, and L<initgroups(3)>. As
+such it will only work on Unix-like operating systems.
 
 =head1 EXCEPTION HANDLING
 
@@ -42,7 +43,9 @@ check it after trapping the exception for finer exception handling:
 
 =head1 FUNCTIONS
 
-All functions are exported on demand.
+All functions are exported individually on demand. A function will not be
+available for export if the system does not implement the corresponding
+syscall.
 
 =head2 getgroups
 

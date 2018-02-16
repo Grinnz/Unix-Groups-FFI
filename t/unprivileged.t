@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
-use Unix::Groups::FFI qw(getgroups setgroups initgroups);
+use Unix::Groups::FFI qw(getgroups setgroups);
 use Errno 'EPERM';
 
 my @current_groups = split ' ', $);
@@ -14,7 +14,8 @@ SKIP: {
   
   ok !eval { setgroups; 1 }, 'Failed to set supplementary groups';
   cmp_ok 0+$!, '==', EPERM, 'Insufficient privilege';
-  
+
+  Unix::Groups::FFI->import('initgroups');
   my $username = getpwuid $>;
   ok !eval { initgroups($username); 1 }, 'Failed to initialize supplementary groups';
   cmp_ok 0+$!, '==', EPERM, 'Insufficient privilege';
