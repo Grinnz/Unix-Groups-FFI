@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
-use Unix::Groups::FFI qw(getgroups setgroups initgroups);
+use Unix::Groups::FFI qw(getgroups setgroups getgrouplist initgroups);
 use Errno 'EINVAL';
 
 plan skip_all => 'TEST_RUN_SUDO=1' unless $ENV{TEST_RUN_SUDO};
@@ -28,11 +28,17 @@ is_deeply [getgroups], [], 'No supplementary groups';
 ok !eval { setgroups((0)x2**18); 1 }, 'Failed to set 2**18 groups';
 cmp_ok $!, '==', EINVAL, 'right error code';
 
-ok(eval { initgroups($user, $gid); 1 }, "Initialized groups for $user") or diag $@;
+ok(eval { initgroups($user, $gid); 1 }, "Initialized groups for $user with $gid") or diag $@;
 ok +(grep { $_ == $gid } getgroups), "Supplementary groups contain $gid";
+
+is_deeply {map { ($_ => 1) } getgroups}, {map { ($_ => 1) } getgrouplist($user, $gid)},
+  "Supplementary groups match groups for $user with $gid";
 
 ok(eval { initgroups($user); 1 }, "Initialized groups for $user") or diag $@;
 ok +(grep { $_ == $gid } getgroups), "Supplementary groups contain $gid";
+
+is_deeply {map { ($_ => 1) } getgroups}, {map { ($_ => 1) } getgrouplist($user)},
+  "Supplementary groups match groups for $user";
 
 ok !eval { initgroups('not-a-real-user-hopefully'); 1 }, 'Failed to initialize groups for nonexistent user';
 cmp_ok $!, '==', EINVAL, 'right error code';

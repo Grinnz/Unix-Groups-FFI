@@ -6,10 +6,11 @@ Unix::Groups::FFI - Interface to Unix group syscalls
 
 =head1 SYNOPSIS
 
-  use Unix::Groups::FFI qw(getgroups setgroups initgroups);
+  use Unix::Groups::FFI qw(getgroups setgroups initgroups getgrouplist);
 
   my @gids = getgroups;
   setgroups(@gids);
+  my @gids = getgrouplist($username, $gid);
   initgroups($username, $gid);
 
 =head1 DESCRIPTION
@@ -64,16 +65,29 @@ Attempting to set more than C<NGROUPS_MAX> groups (32 before Linux 2.6.4 or
 65536 since Linux 2.6.4) will result in an C<EINVAL> error. The C<CAP_SETGID>
 L<capability|capabilities(7)> or equivalent privilege is required.
 
+=head2 getgrouplist
+
+  my @gids = getgrouplist($username, $gid);
+  my @gids = getgrouplist($username);
+
+Returns the group IDs for all groups of which C<$username> is a member, also
+including C<$gid> (without repetition), via L<getgrouplist(3)>. If C<$username>
+does not exist on the system, only C<$gid> will be returned.
+
+As a special case, the primary group ID of C<$username> is included if C<$gid>
+is not passed (an C<EINVAL> error will result if the username does not exist).
+
 =head2 initgroups
 
   initgroups($username, $gid);
   initgroups($username);
 
 Initializes the supplementary group access list for the current process to all
-groups of which C<$username> is a member, also including C<$gid>, via
-L<initgroups(3)>. If C<$username> does not exist on the system, the
-supplementary group access list will be set only to C<$gid>. The C<CAP_SETGID>
-L<capability|capabilities(7)> or equivalent privilege is required.
+groups of which C<$username> is a member, also including C<$gid> (without
+repetition), via L<initgroups(3)>. If C<$username> does not exist on the
+system, the supplementary group access list will be set only to C<$gid>. The
+C<CAP_SETGID> L<capability|capabilities(7)> or equivalent privilege is
+required.
 
 As a special case, the primary group ID of C<$username> is included if C<$gid>
 is not passed (an C<EINVAL> error will result if the username does not exist).
