@@ -26,6 +26,8 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
+            "Devel::AssertOS" : "0",
+            "Devel::CheckOS" : "1.63",
             "ExtUtils::MakeMaker" : "0"
          }
       },
