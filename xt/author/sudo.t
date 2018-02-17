@@ -40,10 +40,13 @@ ok +(grep { $_ == $gid } getgroups), "Supplementary groups contain $gid";
 is_deeply {map { ($_ => 1) } getgroups}, {map { ($_ => 1) } getgrouplist($user)},
   "Supplementary groups match groups for $user";
 
-ok !eval { initgroups('not-a-real-user-hopefully'); 1 }, 'Failed to initialize groups for nonexistent user';
+my $nonexistent = 'nonexistent1';
+$nonexistent++ while defined scalar getpwnam $nonexistent;
+
+ok !eval { initgroups($nonexistent); 1 }, 'Failed to initialize groups for nonexistent user';
 cmp_ok $!, '==', EINVAL, 'right error code';
 
-ok(eval { initgroups('not-a-real-user-hopefully', $gid); 1 }, 'Initialized groups for nonexistent user') or diag $@;
+ok(eval { initgroups($nonexistent, $gid); 1 }, 'Initialized groups for nonexistent user') or diag $@;
 is_deeply [getgroups], [$gid], "Supplementary groups initialized to $gid";
 
 done_testing;
