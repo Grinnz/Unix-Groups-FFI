@@ -6,7 +6,7 @@ Unix::Groups::FFI - Interface to Unix group syscalls
 
 =head1 SYNOPSIS
 
-  use Unix::Groups::FFI qw(getgroups setgroups initgroups getgrouplist);
+  use Unix::Groups::FFI qw(getgroups setgroups getgrouplist initgroups);
 
   my @gids = getgroups;
   setgroups(@gids);
@@ -16,8 +16,8 @@ Unix::Groups::FFI - Interface to Unix group syscalls
 =head1 DESCRIPTION
 
 This module provides a FFI interface to several syscalls related to Unix
-groups, including L<getgroups(2)>, L<setgroups(2)>, and L<initgroups(3)>. As
-such it will only work on Unix-like operating systems.
+groups, including L<getgroups(2)>, L<setgroups(2)>, L<getgrouplist(3)>, and
+L<initgroups(3)>. As such it will only work on Unix-like operating systems.
 
 =head1 EXCEPTION HANDLING
 
