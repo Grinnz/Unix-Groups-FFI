@@ -134,7 +134,7 @@ required.
 As a special case, the primary group ID of C<$username> is included if C<$gid>
 is not passed (an C<EINVAL> error will result if the username does not exist).
 
-=head1 EXCEPTION HANDLING
+=head1 ERROR HANDLING
 
 All functions will throw an exception containing the syscall error message in
 the event of an error. L<perlvar/"$!"> will also have been set by the syscall,
