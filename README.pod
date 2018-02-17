@@ -20,31 +20,6 @@ related to Unix groups, including L<getgroups(2)>, L<setgroups(2)>,
 L<getgrouplist(3)>, and L<initgroups(3)>. As such it will only work on
 Unix-like operating systems.
 
-=head1 EXCEPTION HANDLING
-
-All functions will throw an exception containing the syscall error message on
-error. L<perlvar/"$!"> will also have been set by the syscall, so you could
-check it after trapping the exception for finer exception handling:
-
-  use Unix::Groups::FFI 'setgroups';
-  use Syntax::Keyword::Try;
-  use Errno qw(EINVAL EPERM ENOMEM);
-
-  try { setgroups((0)x2**16) }
-  catch {
-    if ($! == EINVAL) {
-      die 'Tried to set too many groups';
-    } elsif ($! == EPERM) {
-      die 'Insufficient privileges to set groups';
-    } elsif ($! == ENOMEM) {
-      die 'Out of memory';
-    } else {
-      die $@;
-    }
-  }
-
-See the documentation for each syscall for details on the possible error codes.
-
 =head1 FUNCTIONS
 
 All functions are exported individually on demand. A function will not be
@@ -92,6 +67,32 @@ required.
 
 As a special case, the primary group ID of C<$username> is included if C<$gid>
 is not passed (an C<EINVAL> error will result if the username does not exist).
+
+=head1 EXCEPTION HANDLING
+
+All functions will throw an exception containing the syscall error message in
+the event of an error. L<perlvar/"$!"> will also have been set by the syscall,
+so you could check it after trapping the exception for finer exception
+handling:
+
+  use Unix::Groups::FFI 'setgroups';
+  use Syntax::Keyword::Try;
+  use Errno qw(EINVAL EPERM ENOMEM);
+
+  try { setgroups((0)x2**16) }
+  catch {
+    if ($! == EINVAL) {
+      die 'Tried to set too many groups';
+    } elsif ($! == EPERM) {
+      die 'Insufficient privileges to set groups';
+    } elsif ($! == ENOMEM) {
+      die 'Out of memory';
+    } else {
+      die $@;
+    }
+  }
+
+See the documentation for each syscall for details on the possible error codes.
 
 =head1 BUGS
 
