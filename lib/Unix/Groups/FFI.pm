@@ -10,7 +10,7 @@ use FFI::Platypus;
 use constant MAX_NGROUPS_MAX => 65536;
 use constant MAX_GETGROUPLIST_TRIES => 5;
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 our @EXPORT_OK = qw(getgroups setgroups getgrouplist initgroups);
 
