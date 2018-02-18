@@ -69,7 +69,7 @@ $ffi->attach(getgrouplist => ['string', 'gid_t', 'gid_t[]', 'int*'] => 'int', su
       }
     }
   }
-  do { $! = EINVAL; croak "$!" } if $rc < 0;
+  do { $! = ERANGE; croak "$!" } if $rc < 0;
   return @groups[0..$count-1];
 });
 
