@@ -50,14 +50,11 @@ $ffi->attach(getgrouplist => ['string', 'gid_t', 'gid_t[]', 'int*'] => 'int', su
   $user = '' unless defined $user;
   $group = (getpwnam($user))[3] unless defined $group;
   do { $! = EINVAL; croak "$!" } unless defined $group;
-  my ($count, @groups) = (1, 0);
+  my ($count, $last_count, @groups) = (1, 1, 0);
   my $rc = $xsub->($user, $group, \@groups, \$count);
   my $tries = 0;
   while ($rc < 0 and $tries++ < MAX_GETGROUPLIST_TRIES) {
-    @groups = (0)x$count;
-    my $last_count = $count;
-    $rc = $xsub->($user, $group, \@groups, \$count);
-    if ($rc < 0 and $count <= $last_count) {
+    if ($count <= $last_count) {
       # count too small, but didn't get a larger one
       # some implementations short-circuit so we have to guess
       if ($last_count < GETGROUPLIST_COUNT_LOW) {
@@ -68,6 +65,9 @@ $ffi->attach(getgrouplist => ['string', 'gid_t', 'gid_t[]', 'int*'] => 'int', su
         $count = GETGROUPLIST_COUNT_MAX;
       }
     }
+    @groups = (0)x$count;
+    $last_count = $count;
+    $rc = $xsub->($user, $group, \@groups, \$count);
   }
   do { $! = ERANGE; croak "$!" } if $rc < 0;
   return @groups[0..$count-1];
