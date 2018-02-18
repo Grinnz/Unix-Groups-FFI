@@ -138,7 +138,8 @@ does not exist on the system, it is unspecified what will be returned but it
 will include C<$gid>.
 
 As a special case, the primary group ID of C<$username> is included if C<$gid>
-is not passed (an C<EINVAL> error will result if the username does not exist).
+is not passed (an C<EINVAL> error will result if the username does not exist on
+the system).
 
 =head2 initgroups
 
@@ -153,7 +154,8 @@ to but it will include C<$gid>. The C<CAP_SETGID> L<capability|capabilities(7)>
 or equivalent privilege is required.
 
 As a special case, the primary group ID of C<$username> is included if C<$gid>
-is not passed (an C<EINVAL> error will result if the username does not exist).
+is not passed (an C<EINVAL> error will result if the username does not exist on
+the system).
 
 =head1 ERROR HANDLING
 
