@@ -13,14 +13,15 @@ my $username = getpwuid $>;
 my $gid = (getpwnam($username))[3];
 
 SKIP: {
-  skip 'getgrouplist not implemented', 5 unless eval { Unix::Groups::FFI->import('getgrouplist'); 1 };
+  skip 'getgrouplist not implemented', 6 unless eval { Unix::Groups::FFI->import('getgrouplist'); 1 };
   
   ok +(grep { $_ == $gid } getgrouplist($username, $gid)), "getgrouplist contains passed $gid";
   ok +(grep { $_ == $gid } getgrouplist($username)), "getgrouplist contains implicit $gid";
   
   my $nonexistent = 'nonexistent1';
   $nonexistent++ while defined scalar getpwnam $nonexistent;
-  ok +(grep { $_ == $gid } getgrouplist($nonexistent, $gid)), "getgrouplist on nonexistent user contains $gid";
+  ok !eval { getgrouplist($nonexistent, $gid); 1 }, "getgrouplist fails on nonexistent user with $gid";
+  cmp_ok 0+$!, '==', EINVAL, 'Invalid argument';
   ok !eval { getgrouplist($nonexistent); 1 }, 'getgrouplist fails on nonexistent user without gid';
   cmp_ok 0+$!, '==', EINVAL, 'Invalid argument';
 }

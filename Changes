@@ -1,4 +1,5 @@
 {{$NEXT}}
+  - Die with EINVAL error if a nonexistent username is passed to initgroups or getgrouplist
   - Fix tests for unspecified behavior on OS X (thanks plicease)
 
 0.001     2018-02-16 20:49:04 EST

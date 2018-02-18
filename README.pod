@@ -49,12 +49,10 @@ L<capability|capabilities(7)> or equivalent privilege is required.
 
 Returns the group IDs for all groups of which C<$username> is a member, also
 including C<$gid> (without repetition), via L<getgrouplist(3)>. If C<$username>
-does not exist on the system, it is unspecified what will be returned but it
-will include C<$gid>.
+does not exist on the system, an C<EINVAL> error will result.
 
 As a special case, the primary group ID of C<$username> is included if C<$gid>
-is not passed (an C<EINVAL> error will result if the username does not exist on
-the system).
+is not passed.
 
 =head2 initgroups
 
@@ -64,13 +62,11 @@ the system).
 Initializes the supplementary group access list for the current process to all
 groups of which C<$username> is a member, also including C<$gid> (without
 repetition), via L<initgroups(3)>. If C<$username> does not exist on the
-system, it is unspecified what the supplementary group access list will be set
-to but it will include C<$gid>. The C<CAP_SETGID> L<capability|capabilities(7)>
-or equivalent privilege is required.
+system, an C<EINVAL> error will result. The C<CAP_SETGID>
+L<capability|capabilities(7)> or equivalent privilege is required.
 
 As a special case, the primary group ID of C<$username> is included if C<$gid>
-is not passed (an C<EINVAL> error will result if the username does not exist on
-the system).
+is not passed.
 
 =head1 ERROR HANDLING
 

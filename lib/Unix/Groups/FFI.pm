@@ -47,9 +47,9 @@ $ffi->attach(setgroups => ['size_t', 'gid_t[]'] => 'int', sub {
 
 $ffi->attach(getgrouplist => ['string', 'gid_t', 'gid_t[]', 'int*'] => 'int', sub {
   my ($xsub, $user, $group) = @_;
-  $user = '' unless defined $user;
-  $group = (getpwnam($user))[3] unless defined $group;
-  do { $! = EINVAL; croak "$!" } unless defined $group;
+  my (undef, undef, $uid, $gid) = getpwnam $user;
+  do { $! = EINVAL; croak "$!" } unless defined $uid and defined $gid;
+  $group = $gid unless defined $group;
   my ($count, $last_count, @groups) = (1, 1, 0);
   my $rc = $xsub->($user, $group, \@groups, \$count);
   my $tries = 0;
@@ -75,9 +75,9 @@ $ffi->attach(getgrouplist => ['string', 'gid_t', 'gid_t[]', 'int*'] => 'int', su
 
 $ffi->attach(initgroups => ['string', 'gid_t'] => 'int', sub {
   my ($xsub, $user, $group) = @_;
-  $user = '' unless defined $user;
-  $group = (getpwnam($user))[3] unless defined $group;
-  do { $! = EINVAL; croak "$!" } unless defined $group;
+  my (undef, undef, $uid, $gid) = getpwnam $user;
+  do { $! = EINVAL; croak "$!" } unless defined $uid and defined $gid;
+  $group = $gid unless defined $group;
   my $rc = $xsub->($user, $group);
   croak "$!" if $rc < 0;
   return 0;
@@ -134,12 +134,10 @@ L<capability|capabilities(7)> or equivalent privilege is required.
 
 Returns the group IDs for all groups of which C<$username> is a member, also
 including C<$gid> (without repetition), via L<getgrouplist(3)>. If C<$username>
-does not exist on the system, it is unspecified what will be returned but it
-will include C<$gid>.
+does not exist on the system, an C<EINVAL> error will result.
 
 As a special case, the primary group ID of C<$username> is included if C<$gid>
-is not passed (an C<EINVAL> error will result if the username does not exist on
-the system).
+is not passed.
 
 =head2 initgroups
 
@@ -149,13 +147,11 @@ the system).
 Initializes the supplementary group access list for the current process to all
 groups of which C<$username> is a member, also including C<$gid> (without
 repetition), via L<initgroups(3)>. If C<$username> does not exist on the
-system, it is unspecified what the supplementary group access list will be set
-to but it will include C<$gid>. The C<CAP_SETGID> L<capability|capabilities(7)>
-or equivalent privilege is required.
+system, an C<EINVAL> error will result. The C<CAP_SETGID>
+L<capability|capabilities(7)> or equivalent privilege is required.
 
 As a special case, the primary group ID of C<$username> is included if C<$gid>
-is not passed (an C<EINVAL> error will result if the username does not exist on
-the system).
+is not passed.
 
 =head1 ERROR HANDLING
 

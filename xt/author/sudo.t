@@ -43,7 +43,7 @@ $nonexistent++ while defined scalar getpwnam $nonexistent;
 ok !eval { initgroups($nonexistent); 1 }, 'Failed to initialize groups for nonexistent user';
 cmp_ok $!, '==', EINVAL, 'right error code';
 
-ok(eval { initgroups($nonexistent, $gid); 1 }, 'Initialized groups for nonexistent user') or diag $@;
-ok +(grep { $_ == $gid } getgroups), "Supplementary groups contain $gid";
+ok !eval { initgroups($nonexistent, $gid); 1 }, "Failed to initialize groups for nonexistent user with $gid";
+cmp_ok $!, '==', EINVAL, 'right error code';
 
 done_testing;
