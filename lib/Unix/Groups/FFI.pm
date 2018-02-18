@@ -3,7 +3,7 @@ package Unix::Groups::FFI;
 use strict;
 use warnings;
 use Carp 'croak';
-use Errno 'EINVAL';
+use Errno qw(EINVAL ERANGE);
 use Exporter 'import';
 use FFI::Platypus;
 

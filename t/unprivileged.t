@@ -20,7 +20,7 @@ SKIP: {
   
   my $nonexistent = 'nonexistent1';
   $nonexistent++ while defined scalar getpwnam $nonexistent;
-  is_deeply [getgrouplist($nonexistent, $gid)], [$gid], 'getgrouplist on nonexistent user with gid';
+  ok +(grep { $_ == $gid } getgrouplist($nonexistent, $gid)), "getgrouplist on nonexistent user contains $gid";
   ok !eval { getgrouplist($nonexistent); 1 }, 'getgrouplist fails on nonexistent user without gid';
   cmp_ok 0+$!, '==', EINVAL, 'Invalid argument';
 }
