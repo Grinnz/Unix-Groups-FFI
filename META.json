@@ -59,7 +59,7 @@
    "provides" : {
       "Unix::Groups::FFI" : {
          "file" : "lib/Unix/Groups/FFI.pm",
-         "version" : "0.001"
+         "version" : "0.002"
       }
    },
    "release_status" : "stable",
@@ -74,7 +74,7 @@
          "web" : "https://github.com/Grinnz/Unix-Groups-FFI"
       }
    },
-   "version" : "0.001",
+   "version" : "0.002",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.026001"
@@ -263,7 +263,7 @@
                   "branch" : null,
                   "changelog" : "Changes",
                   "signed" : 0,
-                  "tag" : "v0.001",
+                  "tag" : "v0.002",
                   "tag_format" : "v%v",
                   "tag_message" : "v%v"
                },

@@ -22,9 +22,6 @@ plan skip_all => "invalid user in TEST_ORIGINAL_USER=$ENV{TEST_ORIGINAL_USER}"
 ok(eval { setgroups($gid); 1 }, "Set supplementary groups to $gid") or diag $@;
 is_deeply [getgroups], [$gid], "Retrieved supplementary groups $gid";
 
-ok(eval { setgroups(); 1 }, 'Cleared supplementary groups') or diag $@;
-is_deeply [getgroups], [], 'No supplementary groups';
-
 ok !eval { setgroups((0)x2**18); 1 }, 'Failed to set 2**18 groups';
 cmp_ok $!, '==', EINVAL, 'right error code';
 
@@ -47,6 +44,6 @@ ok !eval { initgroups($nonexistent); 1 }, 'Failed to initialize groups for nonex
 cmp_ok $!, '==', EINVAL, 'right error code';
 
 ok(eval { initgroups($nonexistent, $gid); 1 }, 'Initialized groups for nonexistent user') or diag $@;
-is_deeply [getgroups], [$gid], "Supplementary groups initialized to $gid";
+ok +(grep { $_ == $gid } getgroups), "Supplementary groups contain $gid";
 
 done_testing;

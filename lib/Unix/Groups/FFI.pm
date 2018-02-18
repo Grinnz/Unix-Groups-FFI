@@ -123,7 +123,8 @@ Returns the supplementary group IDs of the current process via L<getgroups(2)>.
 
 Sets the supplementary group IDs for the current process via L<setgroups(2)>.
 Attempting to set more than C<NGROUPS_MAX> groups (32 before Linux 2.6.4 or
-65536 since Linux 2.6.4) will result in an C<EINVAL> error. The C<CAP_SETGID>
+65536 since Linux 2.6.4) will result in an C<EINVAL> error. Passing an empty
+list of group IDs may result in unspecified behavior. The C<CAP_SETGID>
 L<capability|capabilities(7)> or equivalent privilege is required.
 
 =head2 getgrouplist
@@ -133,7 +134,8 @@ L<capability|capabilities(7)> or equivalent privilege is required.
 
 Returns the group IDs for all groups of which C<$username> is a member, also
 including C<$gid> (without repetition), via L<getgrouplist(3)>. If C<$username>
-does not exist on the system, only C<$gid> will be returned.
+does not exist on the system, it is unspecified what will be returned but it
+will include C<$gid>.
 
 As a special case, the primary group ID of C<$username> is included if C<$gid>
 is not passed (an C<EINVAL> error will result if the username does not exist).
@@ -146,9 +148,9 @@ is not passed (an C<EINVAL> error will result if the username does not exist).
 Initializes the supplementary group access list for the current process to all
 groups of which C<$username> is a member, also including C<$gid> (without
 repetition), via L<initgroups(3)>. If C<$username> does not exist on the
-system, the supplementary group access list will be set only to C<$gid>. The
-C<CAP_SETGID> L<capability|capabilities(7)> or equivalent privilege is
-required.
+system, it is unspecified what the supplementary group access list will be set
+to but it will include C<$gid>. The C<CAP_SETGID> L<capability|capabilities(7)>
+or equivalent privilege is required.
 
 As a special case, the primary group ID of C<$username> is included if C<$gid>
 is not passed (an C<EINVAL> error will result if the username does not exist).
