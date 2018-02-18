@@ -17,7 +17,7 @@ if ((my $uid = $>) != 0) {
 plan skip_all => "user is missing in TEST_ORIGINAL_USER=$ENV{TEST_ORIGINAL_USER}"
 	unless my $user = $ENV{TEST_ORIGINAL_USER};
 plan skip_all => "invalid user in TEST_ORIGINAL_USER=$ENV{TEST_ORIGINAL_USER}"
-	unless defined(my $gid = (getpwnam($user))[3]);
+	unless defined(my $gid = (getpwnam $user)[3]);
 
 ok(eval { setgroups($gid); 1 }, "Set supplementary groups to $gid") or diag $@;
 is_deeply [getgroups], [$gid], "Retrieved supplementary groups $gid";

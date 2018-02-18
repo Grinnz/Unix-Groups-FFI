@@ -10,7 +10,7 @@ is_deeply {map { ($_ => 1) } getgroups}, {map { ($_ => 1) } @current_groups},
   'Retrieved supplementary groups';
 
 my $username = getpwuid $>;
-my $gid = (getpwnam($username))[3];
+my $gid = (getpwnam $username)[3];
 
 SKIP: {
   skip 'getgrouplist not implemented', 6 unless eval { Unix::Groups::FFI->import('getgrouplist'); 1 };
