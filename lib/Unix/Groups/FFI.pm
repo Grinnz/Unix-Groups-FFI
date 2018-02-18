@@ -7,8 +7,13 @@ use Errno 'EINVAL';
 use Exporter 'import';
 use FFI::Platypus;
 
-use constant MAX_NGROUPS_MAX => 65536;
-use constant MAX_GETGROUPLIST_TRIES => 5;
+use constant {
+  MAX_NGROUPS_MAX => 65536,
+  MAX_GETGROUPLIST_TRIES => 5,
+  GETGROUPLIST_COUNT_LOW => 32,
+  GETGROUPLIST_COUNT_HIGH => 256,
+  GETGROUPLIST_COUNT_MAX => 65536,
+};
 
 our $VERSION = '0.002';
 
@@ -50,7 +55,19 @@ $ffi->attach(getgrouplist => ['string', 'gid_t', 'gid_t[]', 'int*'] => 'int', su
   my $tries = 0;
   while ($rc < 0 and $tries++ < MAX_GETGROUPLIST_TRIES) {
     @groups = (0)x$count;
+    my $last_count = $count;
     $rc = $xsub->($user, $group, \@groups, \$count);
+    if ($rc < 0 and $count <= $last_count) {
+      # count too small, but didn't get a larger one
+      # some implementations short-circuit so we have to guess
+      if ($last_count < GETGROUPLIST_COUNT_LOW) {
+        $count = GETGROUPLIST_COUNT_LOW;
+      } elsif ($last_count < GETGROUPLIST_COUNT_HIGH) {
+        $count = GETGROUPLIST_COUNT_HIGH;
+      } else {
+        $count = GETGROUPLIST_COUNT_MAX;
+      }
+    }
   }
   do { $! = EINVAL; croak "$!" } if $rc < 0;
   return @groups[0..$count-1];
