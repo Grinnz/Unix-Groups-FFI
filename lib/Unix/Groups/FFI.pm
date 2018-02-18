@@ -48,8 +48,8 @@ $ffi->attach(setgroups => ['size_t', 'gid_t[]'] => 'int', sub {
 $ffi->attach(getgrouplist => ['string', 'gid_t', 'gid_t[]', 'int*'] => 'int', sub {
   my ($xsub, $user, $group) = @_;
   $user = '' unless defined $user;
-  my (undef, undef, $uid, $gid) = getpwnam $user;
-  do { $! = EINVAL; croak "$!" } unless defined $uid and defined $gid;
+  my $gid = (getpwnam $user)[3];
+  do { $! = EINVAL; croak "$!" } unless defined $gid;
   $group = $gid unless defined $group;
   my ($count, $last_count, @groups) = (1, 1, 0);
   my $rc = $xsub->($user, $group, \@groups, \$count);
@@ -77,8 +77,8 @@ $ffi->attach(getgrouplist => ['string', 'gid_t', 'gid_t[]', 'int*'] => 'int', su
 $ffi->attach(initgroups => ['string', 'gid_t'] => 'int', sub {
   my ($xsub, $user, $group) = @_;
   $user = '' unless defined $user;
-  my (undef, undef, $uid, $gid) = getpwnam $user;
-  do { $! = EINVAL; croak "$!" } unless defined $uid and defined $gid;
+  my $gid = (getpwnam $user)[3];
+  do { $! = EINVAL; croak "$!" } unless defined $gid;
   $group = $gid unless defined $group;
   my $rc = $xsub->($user, $group);
   croak "$!" if $rc < 0;
