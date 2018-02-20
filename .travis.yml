@@ -14,9 +14,6 @@ env:
   - TEST_RUN_SUDO=0
   - TEST_RUN_SUDO=1
 sudo: required
-os:
-  - linux
-  - osx
 script:
   - perl Makefile.PL && make && make test
   - prove -lr xt/author/
