@@ -1,4 +1,5 @@
 {{$NEXT}}
+  - Convert to use FFI::Platypus type parser version 1, no functional changes.
 
 0.002     2018-02-17 22:15:28 EST
   - Die with EINVAL error if a nonexistent username is passed to initgroups or getgrouplist

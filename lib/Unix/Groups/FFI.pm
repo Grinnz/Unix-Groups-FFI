@@ -21,7 +21,7 @@ our @EXPORT_OK = qw(getgroups setgroups getgrouplist initgroups);
 
 our @CARP_NOT = qw(FFI::Platypus);
 
-my $ffi = FFI::Platypus->new(lib => [undef], ignore_not_found => 1);
+my $ffi = FFI::Platypus->new(api => 1, lib => [undef], ignore_not_found => 1);
 
 $ffi->attach(getgroups => ['int', 'gid_t[]'] => 'int', sub {
   my ($xsub) = @_;
