@@ -15,7 +15,7 @@ use constant {
   GETGROUPLIST_COUNT_MAX => 65536,
 };
 
-our $VERSION = '0.003';
+our $VERSION = '1.000';
 
 our @EXPORT_OK = qw(getgroups setgroups getgrouplist initgroups);
 
